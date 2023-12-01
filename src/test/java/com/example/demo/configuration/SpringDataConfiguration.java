@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -15,15 +16,16 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import jakarta.persistence.EntityManagerFactory;
 
-@EnableJpaRepositories("com.manning.javapersistence.ch11.repositories")
+@Configuration
+@EnableJpaRepositories("com.example.demo.repositories")
 public class SpringDataConfiguration {
 
 	@Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/CH11_TRANSACTIONS5?serverTimezone=UTC");
-        dataSource.setUsername("root");
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/spring_practice");
+        dataSource.setUsername("peter");
         dataSource.setPassword("");
         return dataSource;
     }
@@ -36,7 +38,7 @@ public class SpringDataConfiguration {
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        jpaVendorAdapter.setDatabase(Database.MYSQL);
+        jpaVendorAdapter.setDatabase(Database.POSTGRESQL);
         jpaVendorAdapter.setShowSql(true);
         return jpaVendorAdapter;
     }
@@ -50,7 +52,7 @@ public class SpringDataConfiguration {
         properties.put("hibernate.hbm2ddl.auto", "create");
         localContainerEntityManagerFactoryBean.setJpaProperties(properties);
         localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter());
-        localContainerEntityManagerFactoryBean.setPackagesToScan("com.manning.javapersistence.ch11");
+        localContainerEntityManagerFactoryBean.setPackagesToScan("com.example.demo");
         return localContainerEntityManagerFactoryBean;
     }
 }
