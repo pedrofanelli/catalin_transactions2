@@ -52,6 +52,9 @@ public class TransactionPropagationTest {
     	 *  non-transactional la que estamos parados. Por eso en el ejemplo se agrega un log al repositorio y se 
     	 *  lanza una excepción apropósito. 
     	 *  
+    	 *  La excepción lanzada demuestra que NO estamos dentro de una transacción, porque si lo estuvieramos
+    	 *  entonces se haría un rollback, y lo agregado con anterioridad se borraría!
+    	 *  
     	 */
         assertAll(
                 () -> assertThrows(RuntimeException.class, () -> itemRepository.addLogs()),
@@ -59,26 +62,39 @@ public class TransactionPropagationTest {
                 () -> assertEquals("check from not supported 1", logRepository.findAll().get(0).getMessage())
         );
 
-        // no transaction - first record is added in the log even after exception
+        // no transaction - first record is added in the log even after exception!
+        // metodo que imprime cada log en el repositorio
         logRepository.showLogs();
     }
 
-    /*
+    
     
     @Test
     public void supports() {
         // executing without transaction:
         // addSeparateLogsSupports is working with no transaction
+    	
+    	/**
+    	 * En este caso no hay propagación a otros Beans. Directamente se ejecuta logRepository.addSeparateLogsSupports().
+    	 * Este método tiene como propagación @Transactional(propagation = Propagation.SUPPORTS), lo que significa que,
+    	 * va a formar parte de otra transacción que esté en ejecución (como fue el ejemplo anterior) y si no existiera
+    	 * ninguna, funciona como non-transactional. 
+    	 * 
+    	 * La excepción lanzada demuestra que NO estamos dentro de una transacción, porque si lo estuvieramos
+    	 * entonces se haría un rollback, y lo agregado con anterioridad se borraría!
+    	 * 
+    	 *  El ejemplo sería igual al anterior pero sin intervenir una transacción externa.
+    	 */
         assertAll(
                 () -> assertThrows(RuntimeException.class, () -> logRepository.addSeparateLogsSupports()),
                 () -> assertEquals(1, logRepository.findAll().size()),
                 () -> assertEquals("check from supports 1", logRepository.findAll().get(0).getMessage())
         );
 
-        // no transaction - first record is added in the log even after exception
+        // no transaction - first record is added in the log even after exception!
         logRepository.showLogs();
     }
-
+    /*
     @Test
     public void mandatory() {
         // get exception because checkNameDuplicate can be executed only in transaction
