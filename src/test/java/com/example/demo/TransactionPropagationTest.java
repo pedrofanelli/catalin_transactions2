@@ -94,14 +94,22 @@ public class TransactionPropagationTest {
         // no transaction - first record is added in the log even after exception!
         logRepository.showLogs();
     }
-    /*
+    
     @Test
     public void mandatory() {
         // get exception because checkNameDuplicate can be executed only in transaction
+    	
+    	/**
+    	 * En este caso, el método checkNameDuplicate, tiene @Transactional(propagation = Propagation.MANDATORY).
+    	 * Eso significa que NECESARIAMENTE debe existir una transacción en curso, sino lanza excepción.
+    	 * 
+    	 * En el ejemplo se lanza IllegalTransactionStateException
+    	 */
+    	
         IllegalTransactionStateException ex = assertThrows(IllegalTransactionStateException.class, () -> itemRepository.checkNameDuplicate("Item1"));
         assertEquals("No existing transaction found for transaction marked with propagation 'mandatory'", ex.getMessage());
     }
-
+    /*
     @Test
     public void never() {
         itemRepository.addItem("Item1", LocalDate.of(2022, 5, 1));
