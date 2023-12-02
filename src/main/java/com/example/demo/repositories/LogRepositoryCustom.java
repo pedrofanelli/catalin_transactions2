@@ -10,9 +10,10 @@ public interface LogRepositoryCustom {
 
 	void log(String message);
 
+	void addSeparateLogsNotSupported();
+	
+	void addSeparateLogsSupports();
+	
     void showLogs();
 
-    void addSeparateLogsNotSupported();
-
-    void addSeparateLogsSupports();
 }
