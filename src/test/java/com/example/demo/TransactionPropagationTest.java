@@ -142,7 +142,17 @@ public class TransactionPropagationTest {
         IllegalTransactionStateException ex = assertThrows(IllegalTransactionStateException.class, () -> itemRepository.showLogs());
         assertEquals("Existing transaction found for transaction marked with propagation 'never'", ex.getMessage());
     }
-    /*
+    
+    /**
+     * El método de agregar Item lo explicamos en el Test anterior.
+     * 
+     * Ahora, que sucede si se agrega uno duplicado.
+     * Primero, se guarda el log que dice que se agrega el item. Luego se ejecuta el método propio checkNameDuplicate() que
+     * controla la duplicación. Si existiera (que es el caso) lanza la excepción DuplicateItemNameException(). Esta fue
+     * creada por nosotros! Extiende una RuntimeException.
+     * 
+     * Luego demuestra que hay 4 logs (porque se agrego antes el que después fracasó) y 3 items.
+     */
     @Test
     public void requiresNew() {
         // requires new - log message is persisted in the logs even after exception
@@ -164,7 +174,7 @@ public class TransactionPropagationTest {
         System.out.println("List of added items: ");
         itemRepository.findAll().forEach(System.out::println);
     }
-
+    
     @Test
     public void noRollback() {
         // no rollback - log message is persisted in the logs even after exception
@@ -187,5 +197,5 @@ public class TransactionPropagationTest {
         itemRepository.findAll().forEach(System.out::println);
     }
     
-    */
+    
 }
