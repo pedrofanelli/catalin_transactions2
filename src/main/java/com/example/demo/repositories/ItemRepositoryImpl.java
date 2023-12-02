@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.exceptions.DuplicateItemNameException;
+import com.example.demo.models.Item;
+import com.example.demo.models.Log;
+
 /**
  * We’ll provide an implementation class for ItemRepository next. The key part of this class name is 
  * the Impl ending. It is not connected to Spring Data and it only implements ItemRepositoryCustom. When 

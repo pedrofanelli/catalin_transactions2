@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.models.*;
+
 /**
  * When we inject a LogRepository bean, Spring Data will detect that LogRepository implements 
  * LogRepositoryCustom and will look up a class called LogRepositoryImpl to act as a custom repository 
