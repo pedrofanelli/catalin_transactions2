@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 
 import org.springframework.transaction.IllegalTransactionStateException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpringDataConfiguration.class})
@@ -38,6 +40,19 @@ public class TransactionPropagationTest {
     public void notSupported() {
         // executing in transaction:
         // addLogs is starting transaction, but addSeparateLogsNotSupported() suspends it
+    	
+    	/**
+    	 *  Ejecutamos itemRepository.addLogs() que es @Transaction(REQUIRED) porque es el default.
+    	 *  Eso significa que si surge una nueva transacción en principio se mantiene dentro del paraguas de la original,
+    	 *  es decir, de la inicial. En nuestro caso de addLogs(). 
+    	 *  
+    	 *  Dentro de este método se ejecuta logRepository.addSeparateLogsNotSupported(); es decir un método de otro bean.
+    	 *  Este último tiene @Transactional(propagation = Propagation.NOT_SUPPORTED). Es decir, que si una transacción
+    	 *  ya se está ejecutando (como es nuestro ejemplo), la misma se "suspenderá" y continuará ejecutandose como 
+    	 *  non-transactional la que estamos parados. Por eso en el ejemplo se agrega un log al repositorio y se 
+    	 *  lanza una excepción apropósito. 
+    	 *  
+    	 */
         assertAll(
                 () -> assertThrows(RuntimeException.class, () -> itemRepository.addLogs()),
                 () -> assertEquals(1, logRepository.findAll().size()),
@@ -48,6 +63,8 @@ public class TransactionPropagationTest {
         logRepository.showLogs();
     }
 
+    /*
+    
     @Test
     public void supports() {
         // executing without transaction:
@@ -123,4 +140,6 @@ public class TransactionPropagationTest {
         System.out.println("List of added items: ");
         itemRepository.findAll().forEach(System.out::println);
     }
+    
+    */
 }

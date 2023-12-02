@@ -58,7 +58,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
     }
 
     @Override
-    @Transactional
+    @Transactional  // DEFAULT propagation
     public void addLogs() {
         logRepository.addSeparateLogsNotSupported();
     }
