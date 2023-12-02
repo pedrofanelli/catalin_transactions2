@@ -44,7 +44,7 @@ public class TransactionPropagationTest {
     	/**
     	 *  Ejecutamos itemRepository.addLogs() que es @Transaction(REQUIRED) porque es el default.
     	 *  Eso significa que si surge una nueva transacción en principio se mantiene dentro del paraguas de la original,
-    	 *  es decir, de la inicial. En nuestro caso de addLogs(). 
+    	 *  es decir, de la inicial; sino se creará una nueva transacción. En nuestro caso de addLogs(). 
     	 *  
     	 *  Dentro de este método se ejecuta logRepository.addSeparateLogsNotSupported(); es decir un método de otro bean.
     	 *  Este último tiene @Transactional(propagation = Propagation.NOT_SUPPORTED). Es decir, que si una transacción
