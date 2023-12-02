@@ -109,7 +109,29 @@ public class TransactionPropagationTest {
         IllegalTransactionStateException ex = assertThrows(IllegalTransactionStateException.class, () -> itemRepository.checkNameDuplicate("Item1"));
         assertEquals("No existing transaction found for transaction marked with propagation 'mandatory'", ex.getMessage());
     }
-    /*
+    
+    
+    /**
+     * 
+     * Esta da unas vueltas pero se entiende.
+     * 
+     * Utilizamos el método itemRepository.addItem() para agregar un Item. Tiene un modo REQUIRED, es decir, default.
+     * Primero, ejecuta logRepository.log(), para loguear el Item que se va a agregar en el futuro. Este método tiene
+     * @Transactional(propagation = Propagation.REQUIRES_NEW), es decir, CREA una nueva transacción y SUSPENDE la actual.
+     * Va a guardar en la base Log ese log. Al finalizar, se reanuda la transacción anterior.
+     * Ejecuta un método propio checkNameDuplicate() con @Transactional(propagation = Propagation.MANDATORY). Esto es,
+     * que si o si supportea una transacción actual, sino lanza excepción. Como existe una transacción activa, continua.
+     * Chekea que no existe un item con el nombre que se quiere agregar y procede. Volvemos al original.
+     * Finalmente, la transaccion origial guarda Item en la base. La persiste.
+     * 
+     * Luego, el test ejecuta logRepository.showLogs(); con @Transactional(propagation = Propagation.NEVER), es decir, que
+     * se ejecuta non-transactionally, y si hubiera una activa, lanza excepción. Como no hay una activa, se ejecuta, y muestra
+     * todos los logs en la base.
+     * 
+     * Luego en el assert, se ejecuta itemRepository.showLogs() en modo REQUIRED. Que la idea es ejecutar el mismo método de antes,
+     * el problema que esta vez SI hay una transacción activa, entonces se lanza una excepcion. 
+     * 
+     */
     @Test
     public void never() {
         itemRepository.addItem("Item1", LocalDate.of(2022, 5, 1));
@@ -120,7 +142,7 @@ public class TransactionPropagationTest {
         IllegalTransactionStateException ex = assertThrows(IllegalTransactionStateException.class, () -> itemRepository.showLogs());
         assertEquals("Existing transaction found for transaction marked with propagation 'never'", ex.getMessage());
     }
-
+    /*
     @Test
     public void requiresNew() {
         // requires new - log message is persisted in the logs even after exception
