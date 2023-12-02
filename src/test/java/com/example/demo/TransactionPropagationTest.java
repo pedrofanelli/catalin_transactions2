@@ -152,6 +152,9 @@ public class TransactionPropagationTest {
      * creada por nosotros! Extiende una RuntimeException.
      * 
      * Luego demuestra que hay 4 logs (porque se agrego antes el que después fracasó) y 3 items.
+     * 
+     * Aunque se haya lanzado una excepción que debería generar un rollback, no afecta al método que guardo el log porque 
+     * es una transacción a parte!
      */
     @Test
     public void requiresNew() {
@@ -175,6 +178,14 @@ public class TransactionPropagationTest {
         itemRepository.findAll().forEach(System.out::println);
     }
     
+    /**
+     * En este ejemplo, muy similar al anterior, sucede exactamente lo mismo, se lanza la excepción por duplicado 
+     * DuplicateItemNameException PERO, si bien es una RuntimeException y debería generar un rollback, no lo hace porque
+     * expresamente la excluimos. @Transactional(noRollbackFor = DuplicateItemNameException.class)
+     * 
+     * Entonces, lo guardado se mantiene, no hay rollback, se mantienen 4 logs. PERO el 4to item, si bien no hay rollback
+     * no llega nunca a agregarse porque la excepción fue lanzada. Eso explica el resultado final.
+     */
     @Test
     public void noRollback() {
         // no rollback - log message is persisted in the logs even after exception
